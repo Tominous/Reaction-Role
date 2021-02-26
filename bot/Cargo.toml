@@ -1,5 +1,5 @@
 [package]
-name = "reaction_role_bot"
+name = "bot"
 version = "0.1.0"
 authors = ["Arthurdw <mail@arthurdw.com>"]
 edition = "2018"

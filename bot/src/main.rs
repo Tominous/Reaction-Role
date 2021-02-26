@@ -1,7 +1,6 @@
+#[macro_use]
+extern crate log;
 extern crate pretty_env_logger;
-#[macro_use] extern crate log;
-
-mod utils;
 
 use std::env;
 
@@ -12,18 +11,25 @@ use serenity::{
     prelude::*,
 };
 
-struct Handler;
+use crate::modules::reaction::handle_reaction_event;
+
+mod modules;
+mod core;
+
+pub struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, _ctx: Context, msg: Message) {
-        info!("Received message: {}", msg.content);
+        debug!("Received message: {}", msg.content);
     }
 
     async fn reaction_add(&self, _ctx: Context, _add_reaction: Reaction) {
-        if let Some(user_id) = _add_reaction.user_id {
-            info!("{} set {} in {}", user_id, _add_reaction.emoji, _add_reaction.message_id)
-        }
+        handle_reaction_event(_ctx, _add_reaction).await;
+    }
+
+    async fn reaction_remove(&self, _ctx: Context, _removed_reaction: Reaction) {
+        handle_reaction_event(_ctx, _removed_reaction).await;
     }
 
     async fn ready(&self, _: Context, ready: Ready) {
